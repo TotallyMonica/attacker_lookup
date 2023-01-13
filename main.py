@@ -81,7 +81,7 @@ def main():
     
     # Opt out of ISP queries
     if "--no-isp-queries" in sys.argv:
-        query_isp = True
+        query_isp = False
     else:
         headers.append('City')
         headers.append('Region')
@@ -133,11 +133,22 @@ def main():
     if query_isp:
         for addr in deduplicated_ipv4_addresses:
             results = isp_info(addr[0], ipinfo_token)
-            addr.append(results.city)
-            addr.append(results.region)
-            addr.append(results.country)
-            addr.append(results.org)
-    
+            try:
+                addr.append(results.city)
+            except AttributeError:
+                addr.append("")
+            try:
+                addr.append(results.region)
+            except AttributeError:
+                addr.append("")
+            try:
+                addr.append(results.country)
+            except AttributeError:
+                addr.append("")
+            try:
+                addr.append(results.org)
+            except AttributeError:
+                addr.append("")
     # Create a report of the queried IP addresses:
     with open("report_ips.csv", "w") as filp:
         writer = csv.writer(filp)
