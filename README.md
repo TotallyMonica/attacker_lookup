@@ -1,8 +1,6 @@
 # Attacker Lookup
 
-> Find out who keeps attacking your server
-
------------------------
+Find out who keeps attacking your server
 
 ## Usage
 
