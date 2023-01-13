@@ -4,7 +4,6 @@ import re
 import csv
 import sys
 import ipinfo
-import asyncio
 
 # This section was assisted with ChatGPT, I really know nothing whenever it comes to DNS queries
 def domain_info(address):
@@ -134,10 +133,10 @@ def main():
     if query_isp:
         for addr in deduplicated_ipv4_addresses:
             results = isp_info(addr[0], ipinfo_token)
-            isp_info.append(results.city)
-            isp_info.append(results.region)
-            isp_info.append(results.country)
-            isp_info.append(results.org)
+            addr.append(results.city)
+            addr.append(results.region)
+            addr.append(results.country)
+            addr.append(results.org)
     
     # Create a report of the queried IP addresses:
     with open("report_ips.csv", "w") as filp:
