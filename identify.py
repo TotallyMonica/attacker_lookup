@@ -69,7 +69,7 @@ def main():
             print("A token for ipinfo.io has not been provided. Limited IP information queries will be performed.")
             print("If you're looking for more information than what's provided, provide your access token using the argument --ipinfo-token {token}")
     
-    elif '--no-isp' not in sys.argv:
+    elif '--no-isp-queries' not in sys.argv:
         print("A token for ipinfo.io has not been provided. Limited IP information queries will be performed.")
         print("If you're looking for more information than what's provided, provide your access token using the argument --ipinfo-token {token}")
     
