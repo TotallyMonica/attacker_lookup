@@ -4,6 +4,7 @@ import re
 import csv
 import sys
 import ipinfo
+import asyncio
 
 # This section was assisted with ChatGPT, I really know nothing whenever it comes to DNS queries
 def domain_info(address):
@@ -37,24 +38,27 @@ def main():
     headers = ["Address", "Try count"]
     ipv4_addresses = []
     deduplicated_ipv4_addresses = []
-    log_file = "journalctl.log"
+    log_file = ""
     ipinfo_token = "--IGNORE--"
     query_rdns = True
     query_isp = True
 
     # Argument checks
-    # # Check for a provided log file to use
-    # if "--log" in sys.argv:
-    #     argument = sys.argv.index("--log")
-    #     log_file = sys.argv[ argument + 1 ]
-    # else:
-    #     print("Error: A log file has not been provided.")
-    #     print(f"Syntax: {sys.argv[0]} logfile.log")
-    #     print()
-    #     print("Possible logs to use:")
-    #     print("\tSSH server logs")
-    #     print("\tjournalctl logs")
-    #     exit()
+    # Check for a provided log file to use
+    if "--log" in sys.argv or "--log-file" in sys.argv:
+        if "--log" in sys.argv:
+            argument = sys.argv.index("--log")
+        else:
+            argument = sys.argv.index("--log-file")
+        log_file = sys.argv[ argument + 1 ]
+    else:
+        print("Error: A log file has not been provided.")
+        print(f"Syntax: {sys.argv[0]} --log-file logfile.log")
+        print()
+        print("Possible logs to use:")
+        print("\tSSH server logs")
+        print("\tjournalctl logs")
+        exit()
     
     # Check if an ipinfo.io token was provided.
     # If no token was used, give a warning about limited results.
@@ -122,14 +126,14 @@ def main():
     # If the user requested the rDNS query, append the rDNS result to the table and JSON
     if query_rdns:
         for addr in deduplicated_ipv4_addresses:
-            result = domain_info(addr)
+            result = domain_info(addr[0])
             addr.append(result)
     
     # If the user requested the ISP info, append select ISP results to the table and the entire results to the JSON
     # Table format: ['City', 'Region', 'Country', 'ISP']
     if query_isp:
         for addr in deduplicated_ipv4_addresses:
-            results = isp_info(addr, ipinfo_token)
+            results = isp_info(addr[0], ipinfo_token)
             isp_info.append(results.city)
             isp_info.append(results.region)
             isp_info.append(results.country)
