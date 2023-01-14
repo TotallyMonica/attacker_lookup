@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
+
+# Included packages
 import socket
 import re
 import csv
 import sys
+
+# Pip packages
 import ipinfo
+from prettytable import PrettyTable
 
 # This section was assisted with ChatGPT, I really know nothing whenever it comes to DNS queries
 def domain_info(address):
@@ -119,32 +124,26 @@ def main():
         # Check if it's in the 10.0.0.0/8 subnet
         if int(delimited_ips[0]) == 10:
             deduplicated_ipv4_addresses.remove(addr)
-            print(f"Removed {addr}")
         
         # Check if it's in the 172.16.0.0/12 subnet
         elif int(delimited_ips[0]) == 172 and ( int(delimited_ips[1]) >= 16 and int(delimited_ips[1]) <= 31):
             deduplicated_ipv4_addresses.remove(addr)
-            print(f"Removed {addr}")
         
         # Check if it's in the 192.168.0.0/16 subnet
         elif int(delimited_ips[0]) == 192 and int(delimited_ips[1]) == 168:
             deduplicated_ipv4_addresses.remove(addr)
-            print(f"Removed {addr}")
         
         # Check if the address is in the 169.254.0.0/16 subnet, in which it is a link-local address
         elif int(delimited_ips[0]) == 169 and int(delimited_ips[1]) == 254:
             deduplicated_ipv4_addresses.remove(addr)
-            print(f"Removed {addr}")
         
         # Check if the address is in the 0.0.0.0/8, in which the address is unusable
         elif int(delimited_ips[0]) == 0:
             deduplicated_ipv4_addresses.remove(addr)
-            print(f"Removed {addr}")
         
         # Check if the address is in the 127.0.0.0/8 subnet, in which the address is itself
         elif int(delimited_ips[0]) == 127:
             deduplicated_ipv4_addresses.remove(addr)
-            print(f"Removed {addr}")
 
     # Add repeated IP addresses to the deduplicated list
     for dedup_addr in deduplicated_ipv4_addresses:
@@ -158,6 +157,7 @@ def main():
     
     # If the user requested the rDNS query, append the rDNS result to the table and JSON
     if query_rdns:
+        print("Beginning rDNS lookup...")
         for addr in deduplicated_ipv4_addresses:
             result = domain_info(addr[0])
             addr.append(result)
@@ -165,6 +165,7 @@ def main():
     # If the user requested the ISP info, append select ISP results to the table and the entire results to the JSON
     # Table format: ['City', 'Region', 'Country', 'ISP']
     if query_isp:
+        print("Beginning ISP queries")
         for addr in deduplicated_ipv4_addresses:
             results = isp_info(addr[0], ipinfo_token)
             try:
@@ -188,6 +189,12 @@ def main():
         writer = csv.writer(filp)
         writer.writerow(headers)
         writer.writerows(deduplicated_ipv4_addresses)
+    
+    # Print out a table
+    table = PrettyTable()
+    table.field_names = headers
+    table.add_rows(deduplicated_ipv4_addresses)
+    print(table)
 
 if __name__ == '__main__':
     main()
