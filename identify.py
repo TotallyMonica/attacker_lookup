@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
-
-# Included packages
 import socket
 import re
 import csv
 import sys
-
-# Pip packages
 import ipinfo
 from prettytable import PrettyTable
 
