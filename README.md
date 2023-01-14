@@ -41,3 +41,7 @@ python3 identify.py
 - Have an option for exporting to JSON files
 - Break up the main function more
 - Consider finding a replacement API for `ipinfo` that provides information without the need for a key
+
+## Credits
+
+Thanks to [Amy](https://github.com/amyipdev) for being the recipient of a brute force SSH attack that prompted me to start writing this.
