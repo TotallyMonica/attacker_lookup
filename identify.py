@@ -111,6 +111,36 @@ def main():
     for addr in ipv4_addresses:
         if addr not in deduplicated_ipv4_addresses:
             deduplicated_ipv4_addresses.append(addr)
+    
+    # Remove non-publically accessible addresses
+    for addr in ipv4_addresses:
+        delimited_ips = addr[0].split('.')
+        for octet in delimited_ips:
+            octet = int(octet)
+
+        # Check if it's in the 10.0.0.0/8 subnet
+        if delimited_ips[0] == 10:
+            ipv4_addresses.remove(addr)
+        
+        # Check if it's in the 172.16.0.0/12 subnet
+        elif delimited_ips[0] == 172 and ( delimited_ips[1] >= 16 and delimited_ips[1] <= 31):
+            ipv4_addresses.remove(addr)
+        
+        # Check if it's in the 192.168.0.0/16 subnet
+        elif delimited_ips[0] == 192 and delimited_ips[1] == 168:
+            ipv4_addresses.remove(addr)
+        
+        # Check if the address is in the 169.254.0.0/16 subnet, in which it is a link-local address
+        elif delimited_ips[0] == 169 and delimited_ips[1] == 254:
+            ipv4_addresses.remove(addr)
+        
+        # Check if the address is in the 0.0.0.0/8, in which the address is unusable
+        elif delimited_ips[0] == 0:
+            ipv4_addresses.remove(addr)
+        
+        # Check if the address is in the 127.0.0.0/8 subnet, in which the address is itself
+        elif delimited_ips[0] == 127:
+            ipv4_addresses.remove(addr)
 
     # Add repeated IP addresses to the deduplicated list
     for dedup_addr in deduplicated_ipv4_addresses:
