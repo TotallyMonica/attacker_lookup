@@ -40,3 +40,4 @@ python3 identify.py
 - Have `--no-isp-queries` and `--ipinfo-token` conflict with each other
 - Have an option for exporting to JSON files
 - Break up the main function more
+- Consider finding a replacement API for `ipinfo` that provides information without the need for a key
